@@ -1,0 +1,33 @@
+﻿@using GastosCore.ViewModels
+@model IEnumerable<GastoDepartamentoViewModel>
+
+
+<h2>Gastos por Departamento</h2>
+
+<form method="get">
+    <label for="fechaInicio">Fecha Inicio:</label>
+    <input type="date" id="fechaInicio" name="fechaInicio" />
+
+    <label for="fechaFin">Fecha Fin:</label>
+    <input type="date" id="fechaFin" name="fechaFin" />
+
+    <button type="submit">Filtrar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Departamento</th>
+            <th>Total Gasto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Departamento</td>
+                <td>@item.TotalGasto</td>
+            </tr>
+        }
+    </tbody>
+</table>
