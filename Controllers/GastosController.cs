@@ -1,37 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GastosCore.Data;
-using GastosCore.Models;
 using GastosCore.ViewModels;
 using System.Linq;
 
-public class GastosController : Controller
+namespace GastosCore.Controllers
 {
-    private readonly GastosCoreContext _context;
-
-    public GastosController(GastosCoreContext context)
+    public class GastosController : Controller
     {
-        _context = context;
-    }
+        private readonly GastosCoreContext _context;
 
-    public IActionResult Index(DateTime? fechaInicio, DateTime? fechaFin)
-    {
-        var query = _context.Gastos.Include(g => g.Empleado).ThenInclude(e => e.Departamento).AsQueryable();
-
-        if (fechaInicio.HasValue && fechaFin.HasValue)
+        public GastosController(GastosCoreContext context)
         {
-            query = query.Where(g => g.Fecha >= fechaInicio && g.Fecha <= fechaFin);
+            _context = context;
         }
 
-        var gastosPorDepartamento = query
-            .GroupBy(g => g.Empleado.Departamento.Nombre)
-            .Select(g => new GastoDepartamentoViewModel
-            {
-                Departamento = g.Key,
-                TotalGasto = g.Sum(x => x.Monto)
-            })
-            .ToList();
+        public IActionResult Index(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            var query = _context.Gastos.Include(g => g.Empleado).ThenInclude(e => e.Departamento).AsQueryable();
 
-        return View(gastosPorDepartamento);
+            if (fechaInicio.HasValue && fechaFin.HasValue)
+            {
+                query = query.Where(g => g.Fecha >= fechaInicio && g.Fecha <= fechaFin);
+            }
+
+            var gastosPorDepartamento = query
+                .GroupBy(g => g.Empleado.Departamento.Nombre)
+                .Select(g => new GastoDepartamentoViewModel
+                {
+                    Departamento = g.Key,
+                    TotalGasto = g.Sum(x => x.Monto)
+                })
+                .ToList();
+
+            return View(gastosPorDepartamento);
+        }
     }
 }
